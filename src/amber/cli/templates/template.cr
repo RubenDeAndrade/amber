@@ -28,6 +28,7 @@ module Amber::CLI
         Dir.mkdir_p(@directory)
       end
 
+      @api = false
       @fields = fields
     end
 
@@ -35,15 +36,29 @@ module Amber::CLI
       case template
       when "app"
         if options
+          puts options.to_s
           puts "Rendering App #{name} in #{directory}"
-          App.new(name, options.d, options.t).render(directory, list: true, color: true)
+          puts "yoooo"
+          puts "=" * 60
+          puts options.d
+          puts "=" * 60
+          puts options.t
+          puts "=" * 60
+          @api = options.api?
+          puts "api:#{@api}"
+          puts "=" * 60
+          App.new(name, options.d, options.t, options.api?).render(directory, list: true, color: true)
           if options.deps?
             puts "Installing Dependencies"
             puts `cd #{name} && crystal deps update`
           end
         end
       when "scaffold"
-        puts "Rendering Scaffold #{name}"
+        # puts "Rendering Scaffold #{name}"
+        puts "=" * 60
+        puts "SCAFFOLD"
+        # puts @api
+        puts "=" * 60
         Scaffold.new(name, fields).render(directory, list: true, color: true)
       when "model"
         puts "Rendering Model #{name}"
@@ -107,7 +122,15 @@ module Teeplate
     #
     # For more information about the arguments, see `Renderer`.
     def render(out_dir, force : Bool = false, interactive : Bool = false, interact : Bool = false, list : Bool = false, color : Bool = false, per_entry : Bool = false, quit : Bool = true)
+      puts "=" * 60
+      puts "RENDER"
+      puts out_dir
+      puts "=" * 60
       renderer = Renderer.new(out_dir, force: force, interact: interactive || interact, list: list, color: color, per_entry: per_entry, quit: quit)
+      puts "=" * 60
+      puts "FILE ENTRIES"
+      # puts file_entries
+      puts "=" * 60
       renderer << filter(file_entries)
       renderer.render
       renderer

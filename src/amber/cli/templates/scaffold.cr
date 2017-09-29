@@ -4,6 +4,7 @@ module Amber::CLI
   class Scaffold < Teeplate::FileTree
     directory "#{__DIR__}/scaffold"
 
+    @pjtype : String
     @name : String
     @fields : Array(Field)
     @visible_fields : Array(String)
@@ -13,8 +14,11 @@ module Amber::CLI
     @primary_key : String
 
     def initialize(@name, fields)
+      puts "INITIALIZE SCAFFOLD"
       @database = database
       @language = language
+      @pjtype = pjtype
+      puts @pjtype
       @fields = fields.map { |field| Field.new(field, database: @database) }
       @fields += %w(created_at:time updated_at:time).map do |f|
         Field.new(f, hidden: true, database: @database)
@@ -23,6 +27,16 @@ module Amber::CLI
       @primary_key = primary_key
       @visible_fields = visible_fields
       add_route
+    end
+
+    def pjtype
+      if File.exists?(AMBER_YML) &&
+         (yaml = YAML.parse(File.read AMBER_YML)) &&
+         (pjtype = yaml["type"]?)
+        pjtype.to_s
+      else
+        return "app"
+      end
     end
 
     def database
@@ -59,7 +73,11 @@ module Amber::CLI
     end
 
     def filter(entries)
-      entries.reject { |entry| entry.path.includes?("src/views") && !entry.path.includes?(".#{@language}") }
+      puts "=" * 60
+      puts "SCAFFOLS FILTER"
+      puts @pjtype
+      puts "=" * 60
+      entries.reject { |entry| (entry.path.includes?("src/views") && !entry.path.includes?(".#{@language}")) || (entry.path.includes?("src/views") && @pjtype == "api") }
     end
 
     def visible_fields

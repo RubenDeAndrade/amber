@@ -18,7 +18,7 @@ end
 module Amber::CLI
   class MainCommand < ::Cli::Supercommand
     command_name "amber"
-    version "Amber CMD (amberframework.org) - v#{VERSION}"
+    version "Amber CMD (amberframework.org) - RUBEN v#{VERSION}"
 
     class Help
       title "\nAmber - Command Line Interface"
@@ -34,7 +34,7 @@ module Amber::CLI
         defaults values shown above in this help message.
 
         Usage:
-        amber new [app_name] -d [pg | mysql | sqlite] -t [slang | ecr] --deps
+        amber new [app_name] -d [pg | mysql | sqlite] -t [slang | ecr] --deps --api
       EOS
 
       footer <<-EOS
@@ -49,6 +49,7 @@ module Amber::CLI
       help desc: "# Describe available commands and usages"
       string ["-t", "--template"], desc: "# Preconfigure for selected template engine. Options: slang | ecr", default: "slang"
       string ["-d", "--database"], desc: "# Preconfigure for selected database. Options: pg | mysql | sqlite", default: "pg"
+      bool ["--api"], desc: "# Preconfigure for API application", default: false
     end
   end
 end
